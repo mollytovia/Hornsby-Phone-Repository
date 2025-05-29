@@ -1,0 +1,609 @@
+import React, { useState, useMemo } from 'react';
+import { Search, Phone, AlertCircle } from 'lucide-react';
+
+const HornsbyPhoneDirectory = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Comprehensive phone directory extracted from the document
+  const phoneDirectory = [
+    // Emergency
+    { name: "Clinical Emergency Response", number: "2222", fullNumber: "94856333", category: "Emergency", isEmergency: true },
+    
+    // A
+    { name: "Aboriginal Health Unit RNSH", number: "94629017", category: "Aboriginal Health" },
+    { name: "Aboriginal Support Room", number: "94853605", category: "Aboriginal Health" },
+    { name: "ACAT", number: "1800302334", category: "Assessment" },
+    { name: "My Aged Care - Community Referral", number: "1800200422", category: "Assessment" },
+    { name: "Admissions - General Enquiries", number: "56344", fullNumber: "94856344", category: "Admissions" },
+    { name: "Admissions Supervisor", number: "56341", fullNumber: "94856341", category: "Admissions" },
+    { name: "Patient Liaison Officer", number: "56343", fullNumber: "94856343", category: "Admissions" },
+    { name: "IBU", number: "56355", fullNumber: "94856355", category: "Admissions" },
+    { name: "Waitlist Co-ordinator", number: "56345", fullNumber: "94856345", category: "Admissions" },
+    { name: "Admissions Fax", number: "56040", fullNumber: "94856040", category: "Admissions" },
+    { name: "Day Medical Unit M/W/F", number: "56334", fullNumber: "94856334", category: "Day Medical" },
+    { name: "Day Medical Unit T/Th", number: "56777", fullNumber: "94856777", category: "Day Medical" },
+    { name: "Allied Health General Enquiries", number: "97633555", category: "Allied Health" },
+    { name: "APAC Patient Referral", number: "1300732503", category: "APAC" },
+    { name: "APAC NSLHD Hospital in the Home", number: "94629460", category: "APAC" },
+    { name: "ASET Nurse", number: "97633947", category: "Nursing" },
+    { name: "Breast Screening", number: "56111", fullNumber: "94856111", category: "Screening" },
+    { name: "Breast Screening Bookings", number: "132050", category: "Screening" },
+    
+    // B-C
+    { name: "Café Life Grain", number: "99462065", category: "Food Services" },
+    { name: "Cardiac Rehabilitation", number: "97633595", category: "Cardiac" },
+    { name: "Cardiac Investigation Unit", number: "56330", fullNumber: "94856330", category: "Cardiac" },
+    { name: "Cardiac Investigation Fax", number: "56781", fullNumber: "94856781", category: "Cardiac" },
+    { name: "Cardiac Technician/RN", number: "56954", fullNumber: "94856954", category: "Cardiac" },
+    { name: "Cardiology CNC", number: "0477835767", category: "Cardiac" },
+    { name: "Carer Support Service Manager", number: "94629721", category: "Support Services" },
+    { name: "Carers Centre", number: "56357", fullNumber: "94856357", category: "Support Services" },
+    { name: "Car Park Metro", number: "56008", fullNumber: "94856008", category: "Facilities" },
+    { name: "Cashier", number: "56587", fullNumber: "94856587", category: "Finance" },
+    { name: "CETD Centre for Training", number: "97633982", category: "Training" },
+    { name: "Chapel/Chaplain", number: "56090", fullNumber: "94856090", category: "Spiritual Care" },
+    { name: "Clinical Governance Manager", number: "97633927", category: "Clinical Governance" },
+    { name: "Clinical Risk Manager", number: "94507027", category: "Clinical Governance" },
+    { name: "Clinical Governance Data Admin", number: "97633557", category: "Clinical Governance" },
+    { name: "Clinical Redesign & Improvement", number: "0401140556", category: "Clinical Governance" },
+    { name: "Service Improvement Manager", number: "0434567264", category: "Clinical Governance" },
+    { name: "Concierge Desk", number: "56377", fullNumber: "94856377", category: "Information" },
+    { name: "Concierge Desk Level 5", number: "56364", fullNumber: "94856364", category: "Information" },
+    
+    // Community Health Centres
+    { name: "Berowra Community Health", number: "94857544", category: "Community Health" },
+    { name: "Berowra Fax", number: "94857536", category: "Community Health" },
+    { name: "Brooklyn Community Health", number: "94857500", category: "Community Health" },
+    { name: "Brooklyn Fax", number: "99857631", category: "Community Health" },
+    { name: "Galston Community Health", number: "94857599", category: "Community Health" },
+    { name: "Galston Fax", number: "96532110", category: "Community Health" },
+    { name: "Hillview Community Health", number: "94857580", category: "Community Health" },
+    { name: "Hillview Fax", number: "94889017", category: "Community Health" },
+    { name: "Pennant Hills Community Health", number: "94857588", category: "Community Health" },
+    { name: "Pennant Hills Fax", number: "94857558", category: "Community Health" },
+    { name: "Computer Services Helpdesk", number: "1300285533", category: "IT Services" },
+    { name: "Corporate Services Manager", number: "97633560", category: "Administration" },
+    { name: "Corporate Services Support", number: "97633561", category: "Administration" },
+    
+    // D-E
+    { name: "Dental Services", number: "1800679336", category: "Dental" },
+    { name: "Diabetes Education", number: "56489", fullNumber: "94856489", category: "Education" },
+    { name: "Dialysis Unit", number: "56989", fullNumber: "94856989", category: "Dialysis" },
+    { name: "Dietitian", number: "97633555", category: "Allied Health" },
+    { name: "Dietitian Fax", number: "56021", fullNumber: "94856021", category: "Allied Health" },
+    { name: "Discharge Planner", number: "56595", fullNumber: "94856595", category: "Discharge Planning" },
+    { name: "Drug Alcohol & Gambling Service", number: "56740", fullNumber: "94856740", category: "Mental Health" },
+    { name: "Drug Alcohol Service Fax", number: "56063", fullNumber: "94856063", category: "Mental Health" },
+    { name: "Employee Assistance Program", number: "56360", fullNumber: "94856360", category: "Staff Services" },
+    
+    // Early Childhood Health Centres
+    { name: "Early Childhood Health NUM", number: "90249029", category: "Early Childhood" },
+    { name: "Early Childhood Health Fax", number: "91446435", category: "Early Childhood" },
+    { name: "Berowra/Brooklyn Early Childhood", number: "94857540", category: "Early Childhood" },
+    { name: "Berowra/Brooklyn Fax", number: "94857539", category: "Early Childhood" },
+    { name: "Galston/Pennant Hills Early Childhood", number: "94857566", category: "Early Childhood" },
+    { name: "Hornsby Florence St Early Childhood", number: "94857533", category: "Early Childhood" },
+    { name: "Hornsby Florence St Fax", number: "94771273", category: "Early Childhood" },
+    { name: "St Ives Early Childhood", number: "94857555", category: "Early Childhood" },
+    { name: "St Ives Fax", number: "91444960", category: "Early Childhood" },
+    
+    // Emergency Department
+    { name: "Emergency Department Front Desk", number: "56600", fullNumber: "94856600", category: "Emergency" },
+    { name: "ED Communications Clerk", number: "56611", fullNumber: "94856611", category: "Emergency" },
+    { name: "ED Navigator", number: "56550", fullNumber: "94856550", category: "Emergency" },
+    { name: "ED Admitting Officer", number: "56625", fullNumber: "94856625", category: "Emergency" },
+    { name: "Emergency Department Fax", number: "56060", fullNumber: "94856060", category: "Emergency" },
+    { name: "Engineering Services", number: "56250", fullNumber: "94856250", category: "Engineering" },
+    { name: "Engineering Fax", number: "56095", fullNumber: "94856095", category: "Engineering" },
+    
+    // Environmental Services
+    { name: "Environmental Services Site Manager", number: "56236", fullNumber: "94856236", category: "Environmental" },
+    { name: "Environmental Services Supervisor", number: "56234", fullNumber: "94856234", category: "Environmental" },
+    { name: "Environmental Support Manager", number: "56235", fullNumber: "94856235", category: "Environmental" },
+    { name: "Equipment Loan Pool", number: "56130", fullNumber: "94856130", category: "Equipment" },
+    
+    // Executive Suite
+    { name: "EA to GM", number: "97415471", category: "Executive" },
+    { name: "Executive Suite Fax", number: "56094", fullNumber: "94856094", category: "Executive" },
+    
+    // Finance
+    { name: "Management Accountant", number: "97633928", category: "Finance" },
+    { name: "Manager Finance & Performance", number: "97415479", category: "Finance" },
+    { name: "Fire Safety Officer", number: "56613", fullNumber: "94856613", category: "Safety" },
+    { name: "Florist - Artisan Flowers", number: "0419294410", category: "Services" },
+    
+    // Food Services
+    { name: "Food Services Manager", number: "56231", fullNumber: "94856231", category: "Food Services" },
+    { name: "Food Services Supervisor", number: "56233", fullNumber: "94856233", category: "Food Services" },
+    { name: "Food Services Fax", number: "94856023", category: "Food Services" },
+    { name: "Central Plating Areas", number: "47247", fullNumber: "94847247", category: "Food Services" },
+    { name: "Menu Office", number: "56233", fullNumber: "94856233", category: "Food Services" },
+    
+    // G-H
+    { name: "GRACE Nurse", number: "0434183549", category: "Nursing" },
+    { name: "GP Practice & Teaching Unit", number: "56200", fullNumber: "94856200", category: "Medical Services" },
+    { name: "GP Practice Fax", number: "56025", fullNumber: "94856025", category: "Medical Services" },
+    { name: "Health Information Systems", number: "56123", fullNumber: "94856123", category: "Health Information" },
+    { name: "Request for Records", number: "56120", fullNumber: "94856120", category: "Health Information" },
+    { name: "Coding Unit", number: "56119", fullNumber: "94856119", category: "Health Information" },
+    { name: "Health Information Fax", number: "56020", fullNumber: "94856020", category: "Health Information" },
+    { name: "Health Roster Macquarie", number: "97516000", category: "Staffing" },
+    { name: "Healthy Lifestyle", number: "99265555", category: "Health Promotion" },
+    { name: "Heart Failure Service", number: "56470", fullNumber: "94856470", category: "Cardiac" },
+    
+    // Hospital in the Home
+    { name: "Hospital in the Home Clinic RN", number: "0436404991", category: "HITH" },
+    { name: "HITH Dr Office", number: "94856426", category: "HITH" },
+    { name: "HITH RN Office", number: "94856430", category: "HITH" },
+    { name: "HITH Treatment Room 1", number: "47421", fullNumber: "94847421", category: "HITH" },
+    { name: "HITH Treatment Room 2", number: "47422", fullNumber: "94847422", category: "HITH" },
+    { name: "Hydrotherapy Pool", number: "56085", fullNumber: "94856085", category: "Therapy" },
+    
+    // I-L
+    { name: "Infection Control", number: "97633650", category: "Infection Control" },
+    { name: "Mental Health Infection Control CNC", number: "0422005640", category: "Infection Control" },
+    
+    // Intensive Care
+    { name: "Intensive Care Unit", number: "56633", fullNumber: "94856633", category: "ICU" },
+    { name: "ICU Nursing Unit Manager", number: "56630", fullNumber: "94856630", category: "ICU" },
+    { name: "ICU CSO", number: "56631", fullNumber: "94856631", category: "ICU" },
+    { name: "ICU Fax", number: "56033", fullNumber: "94856033", category: "ICU" },
+    
+    { name: "Interpreter Service", number: "99123800", category: "Interpreter" },
+    { name: "Koala Cottage Family Care", number: "56112", fullNumber: "94856112", category: "Family Care" },
+    { name: "Koala Cottage Psychologist", number: "56113", fullNumber: "94856113", category: "Family Care" },
+    { name: "Library", number: "97633932", category: "Library" },
+    { name: "Library Fax", number: "94856054", category: "Library" },
+    { name: "Linen", number: "56234", fullNumber: "94856234", category: "Support Services" },
+    
+    // M
+    { name: "MACARF", number: "56470", fullNumber: "94856470", category: "MACARF" },
+    { name: "MACARF Fax", number: "56081", fullNumber: "94856081", category: "MACARF" },
+    { name: "Mail Room", number: "56594", fullNumber: "94856594", category: "Mail" },
+    
+    // Maternity Unit
+    { name: "Antenatal/Gynae Clinic", number: "56699", fullNumber: "94856699", category: "Maternity" },
+    { name: "Antenatal Clinic NUM", number: "56689", fullNumber: "94856689", category: "Maternity" },
+    { name: "Maternity Bookings", number: "56699", fullNumber: "94856699", category: "Maternity" },
+    { name: "Clinical Midwifery Consultant", number: "56688", fullNumber: "94856688", category: "Maternity" },
+    { name: "Maternity Clinical Educator", number: "56683", fullNumber: "94856683", category: "Maternity" },
+    { name: "Day Assessment Unit", number: "56686", fullNumber: "94856686", category: "Maternity" },
+    { name: "Delivery/Birthing Unit", number: "56690", fullNumber: "94856690", category: "Maternity" },
+    { name: "Lactation Consultant", number: "56691", fullNumber: "94856691", category: "Maternity" },
+    { name: "MSP (MITH)", number: "56693", fullNumber: "94856693", category: "Maternity" },
+    { name: "Maternity Ward", number: "56677", fullNumber: "94856677", category: "Maternity" },
+    { name: "MUM", number: "56680", fullNumber: "94856680", category: "Maternity" },
+    { name: "Nursery", number: "56678", fullNumber: "94856678", category: "Maternity" },
+    
+    { name: "Meals on Wheels", number: "94822088", category: "Community Services" },
+    
+    // Medical Imaging
+    { name: "Medical Imaging", number: "56533", fullNumber: "94856533", category: "Medical Imaging" },
+    { name: "Nuclear Medicine", number: "56536", fullNumber: "94856536", category: "Medical Imaging" },
+    { name: "Ultrasound", number: "56537", fullNumber: "94856537", category: "Medical Imaging" },
+    
+    // Medical Services
+    { name: "Director Medical Services", number: "97415475", category: "Medical Services" },
+    { name: "Manager Medical Services", number: "97415482", category: "Medical Services" },
+    { name: "EA to DMS Mon/Tue", number: "97415473", category: "Medical Services" },
+    { name: "EA to DMS Wed/Thu/Fri", number: "97415474", category: "Medical Services" },
+    
+    // Meeting Rooms
+    { name: "STAR Meeting Room", number: "56302", fullNumber: "94856302", category: "Meeting Rooms" },
+    { name: "Clinical Services Boardroom", number: "56899", fullNumber: "94856899", category: "Meeting Rooms" },
+    
+    // Mental Health Services
+    { name: "Director of Mental Health Service", number: "56700", fullNumber: "94856700", category: "Mental Health" },
+    { name: "Community Services Manager", number: "56947", fullNumber: "94856947", category: "Mental Health" },
+    { name: "Inpatient Services Manager", number: "56171", fullNumber: "94856171", category: "Mental Health" },
+    { name: "After Hours Nurse Manager", number: "56249", fullNumber: "94856249", category: "Mental Health" },
+    { name: "Acute Care Team", number: "56717", fullNumber: "94856717", category: "Mental Health" },
+    { name: "ACT NUM", number: "56738", fullNumber: "94856738", category: "Mental Health" },
+    { name: "Adult Mental Health Unit", number: "56160", fullNumber: "94856160", category: "Mental Health" },
+    { name: "Adult Mental Health NUM", number: "56170", fullNumber: "94856170", category: "Mental Health" },
+    { name: "Adult Mental Health Fax", number: "94856001", category: "Mental Health" },
+    { name: "MHICU", number: "56722", fullNumber: "94856722", category: "Mental Health" },
+    { name: "MHICU NUM", number: "47004", fullNumber: "94847004", category: "Mental Health" },
+    { name: "PECC", number: "56622", fullNumber: "94856622", category: "Mental Health" },
+    { name: "Assertive Outreach Team", number: "94857577", category: "Mental Health" },
+    { name: "Assertive Outreach Manager", number: "94857575", category: "Mental Health" },
+    { name: "Older Persons Mental Health", number: "56500", fullNumber: "94856500", category: "Mental Health" },
+    { name: "EPIS", number: "56211", fullNumber: "94856211", category: "Mental Health" },
+    { name: "Wahroonga Rehab Service", number: "94871699", category: "Mental Health" },
+    { name: "Child & Youth Mental Health", number: "56155", fullNumber: "94856155", category: "Mental Health" },
+    { name: "Brolga Unit", number: "56150", fullNumber: "94856150", category: "Mental Health" },
+    
+    { name: "Mortuary Enquiries", number: "56123", fullNumber: "94856123", category: "Mortuary" },
+    { name: "Mortuary", number: "56300", fullNumber: "94856300", category: "Mortuary" },
+    { name: "Neuropsychology", number: "56394", fullNumber: "94856394", category: "Psychology" },
+    { name: "University of Sydney Northern Clinical School", number: "90364272", category: "Education" },
+    
+    // N-O
+    { name: "Northern Sydney Home Nursing Hornsby", number: "56222", fullNumber: "94856222", category: "Home Nursing" },
+    { name: "Northern Sydney Home Nursing Ku-ring-gai", number: "94496677", category: "Home Nursing" },
+    { name: "Complex Wound and Continence Clinic", number: "1300732503", category: "Home Nursing" },
+    
+    // Nursing Executive
+    { name: "Director of Nursing", number: "97415480", category: "Nursing Executive" },
+    { name: "Deputy Director of Nursing", number: "97415481", category: "Nursing Executive" },
+    { name: "Operational Nurse Manager", number: "97633651", category: "Nursing Executive" },
+    { name: "Nursing Executive Assistant", number: "97415472", category: "Nursing Executive" },
+    
+    // Nursing Resource Office
+    { name: "NUM Rosters", number: "0400620861", category: "Nursing" },
+    { name: "Patient Flow", number: "0404468742", category: "Patient Flow" },
+    { name: "After Hours Nurse Manager", number: "0404468742", category: "Nursing" },
+    
+    // Occupational Therapy
+    { name: "OT Manager", number: "56766", fullNumber: "94856766", category: "Occupational Therapy" },
+    { name: "OT Adult Outpatients", number: "56940", fullNumber: "94856940", category: "Occupational Therapy" },
+    { name: "OT Paediatrics", number: "56767", fullNumber: "94856767", category: "Occupational Therapy" },
+    { name: "OT Adult Community Admin", number: "97633555", category: "Occupational Therapy" },
+    { name: "OT Adult Community Senior", number: "56830", fullNumber: "94856830", category: "Occupational Therapy" },
+    { name: "OT Acute", number: "56758", fullNumber: "94856758", category: "Occupational Therapy" },
+    { name: "OT Assistant", number: "56765", fullNumber: "94856765", category: "Occupational Therapy" },
+    
+    // Operating Suite
+    { name: "Theatre Reception", number: "56400", fullNumber: "94856400", category: "Operating Suite" },
+    { name: "Operating Suite Fax", number: "56041", fullNumber: "94856041", category: "Operating Suite" },
+    { name: "Theatre Manager", number: "56410", fullNumber: "94856410", category: "Operating Suite" },
+    { name: "NUM A&R", number: "56442", fullNumber: "94856442", category: "Operating Suite" },
+    { name: "NUM S/S", number: "56440", fullNumber: "94856440", category: "Operating Suite" },
+    { name: "NUM DSU", number: "56404", fullNumber: "94856404", category: "Operating Suite" },
+    { name: "Nurse Screener IBU", number: "56346", fullNumber: "94856346", category: "Operating Suite" },
+    { name: "Recovery", number: "56447", fullNumber: "94856447", category: "Operating Suite" },
+    { name: "Red Hat", number: "47440", fullNumber: "94847440", category: "Operating Suite" },
+    
+    // Outpatient Services
+    { name: "Outpatient Reception", number: "56777", fullNumber: "94856777", category: "Outpatients" },
+    { name: "Outpatient Clinics", number: "97633555", category: "Outpatients" },
+    { name: "Orthopaedic Fracture Clinic", number: "56777", fullNumber: "94856777", category: "Outpatients" },
+    { name: "Outpatients Fax", number: "56069", fullNumber: "94856069", category: "Outpatients" },
+    { name: "Osteoporosis Prevention Clinic", number: "56939", fullNumber: "94856939", category: "Outpatients" },
+    { name: "Bone Densitometry", number: "56939", fullNumber: "94856939", category: "Outpatients" },
+    
+    // P
+    { name: "Paediatrics", number: "56644", fullNumber: "94856644", category: "Paediatrics" },
+    { name: "Paediatric CNC", number: "56642", fullNumber: "94856642", category: "Paediatrics" },
+    { name: "Paediatric Educator", number: "56643", fullNumber: "94856643", category: "Paediatrics" },
+    { name: "PARC", number: "56646", fullNumber: "94856646", category: "Paediatrics" },
+    { name: "HITH Paediatric Clinic", number: "56956", fullNumber: "94856956", category: "Paediatrics" },
+    { name: "Paediatric Clinic", number: "56777", fullNumber: "94856777", category: "Paediatrics" },
+    
+    { name: "Palliative Care CNC", number: "0419111848", category: "Palliative Care" },
+    { name: "Patient Access & Logistics", number: "99265500", category: "Patient Services" },
+    { name: "Patient Transport Booking", number: "1300233500", category: "Patient Transport" },
+    
+    // Pathology
+    { name: "Pathology", number: "56244", fullNumber: "94856244", category: "Pathology" },
+    { name: "Pathology Fax", number: "56044", fullNumber: "94856044", category: "Pathology" },
+    { name: "Blood Bank Emergency", number: "56242", fullNumber: "94856242", category: "Pathology" },
+    { name: "Blood Collection Outpatients", number: "56245", fullNumber: "94856245", category: "Pathology" },
+    
+    { name: "Patient Representative", number: "94856362", category: "Patient Services" },
+    
+    // Pharmacy
+    { name: "Pharmacy", number: "56455", fullNumber: "94856455", category: "Pharmacy" },
+    { name: "Director of Pharmacy", number: "56459", fullNumber: "94856459", category: "Pharmacy" },
+    { name: "Pyxis Automation", number: "56458", fullNumber: "94856458", category: "Pharmacy" },
+    { name: "Drug Information", number: "56456", fullNumber: "94856456", category: "Pharmacy" },
+    { name: "Pharmacy Purchasing", number: "56465", fullNumber: "94856465", category: "Pharmacy" },
+    { name: "Pharmacy Distribution", number: "47660", fullNumber: "94847660", category: "Pharmacy" },
+    { name: "Healthylife Retail Shop", number: "90030526", category: "Pharmacy" },
+    
+    { name: "Physiotherapy", number: "97633555", category: "Physiotherapy" },
+    { name: "Physiotherapy Fax", number: "56069", fullNumber: "94856069", category: "Physiotherapy" },
+    { name: "Paediatric Physiotherapy", number: "56335", fullNumber: "94856335", category: "Physiotherapy" },
+    { name: "Podiatry", number: "97633555", category: "Podiatry" },
+    { name: "Podiatry Fax", number: "56021", fullNumber: "94856021", category: "Podiatry" },
+    { name: "Pre-Admission Clinic", number: "56432", fullNumber: "94856432", category: "Pre-Admission" },
+    { name: "Public Health Unit", number: "56911", fullNumber: "94856911", category: "Public Health" },
+    { name: "PPE", number: "56339", fullNumber: "94856339", category: "Public Health" },
+    
+    // R
+    { name: "Director RAC", number: "56850", fullNumber: "94856850", category: "Rehabilitation" },
+    { name: "EA to Director NSLHD RAC", number: "56849", fullNumber: "94856849", category: "Rehabilitation" },
+    { name: "Manager RACS Outpatients", number: "0475979390", category: "Rehabilitation" },
+    { name: "EA to RACS", number: "97633684", category: "Rehabilitation" },
+    { name: "ACAT", number: "1800302334", category: "Rehabilitation" },
+    { name: "ACE CNC", number: "56870", fullNumber: "94856870", category: "Rehabilitation" },
+    { name: "Rehabilitation Ward", number: "56511", fullNumber: "94856511", category: "Rehabilitation" },
+    { name: "Rehabilitation NUM", number: "56512", fullNumber: "94856512", category: "Rehabilitation" },
+    { name: "Rehabilitation Discharge Team", number: "97633562", category: "Rehabilitation" },
+    { name: "Staff Specialists Support", number: "56845", fullNumber: "94856845", category: "Rehabilitation" },
+    { name: "RACs Research Unit", number: "56880", fullNumber: "94856880", category: "Rehabilitation" },
+    { name: "CRT/Allied Admin", number: "56866", fullNumber: "94856866", category: "Rehabilitation" },
+    
+    // Renal
+    { name: "Renal/Haemodialysis Unit", number: "56989", fullNumber: "94856989", category: "Renal" },
+    { name: "Renal CNC", number: "56987", fullNumber: "94856987", category: "Renal" },
+    { name: "Renal NUM", number: "56988", fullNumber: "94856988", category: "Renal" },
+    
+    // Resident Support Unit
+    { name: "RSU Manager", number: "94507029", category: "Resident Support" },
+    { name: "Deputy JMO Manager", number: "97633623", category: "Resident Support" },
+    { name: "RSU Coordinator", number: "94507077", category: "Resident Support" },
+    { name: "RSU Reception", number: "97633625", category: "Resident Support" },
+    { name: "Director Provisional Education", number: "97633627", category: "Resident Support" },
+    
+    { name: "Return to Work Co-Ordinator", number: "56359", fullNumber: "94856359", category: "Staff Services" },
+    
+    { name: "Salary Packaging", number: "0431479516", category: "Staff Services" },
+    
+    // S
+    { name: "Social Work Department", number: "97633555", category: "Social Work" },
+    { name: "Social Work Fax", number: "56098", fullNumber: "94856098", category: "Social Work" },
+    
+    // Speech Pathology
+    { name: "Speech Pathology Reception", number: "97633555", category: "Speech Pathology" },
+    { name: "Speech Pathology Manager", number: "97633555", category: "Speech Pathology" },
+    
+    { name: "Staff Health", number: "56365", fullNumber: "94856365", category: "Staff Services" },
+    { name: "Staff Rehabilitation", number: "97633980", category: "Staff Services" },
+    { name: "Staff Rehabilitation Mobile", number: "0411275387", category: "Staff Services" },
+    { name: "Staff Rehabilitation Fax", number: "56047", fullNumber: "94856047", category: "Staff Services" },
+    
+    { name: "Sterilising Services", number: "56230", fullNumber: "94856230", category: "Sterilising" },
+    { name: "Sterilising Manager", number: "56229", fullNumber: "94856229", category: "Sterilising" },
+    { name: "Stomal Therapy", number: "0473626877", category: "Therapy" },
+    { name: "Stores", number: "56220", fullNumber: "94856220", category: "Stores" },
+    { name: "Stroke CNC", number: "56393", fullNumber: "94856393", category: "Stroke" },
+    { name: "Stroke CNC Mobile", number: "0413888008", category: "Stroke" },
+    { name: "Stroke Fax", number: "56083", fullNumber: "94856083", category: "Stroke" },
+    
+    { name: "Switchboard", number: "9", category: "Switchboard" },
+    { name: "Support Services Manager", number: "0431477138", category: "Support Services" },
+    
+    // T-V
+    { name: "Taxis Combined", number: "133300", category: "Transport" },
+    { name: "Transit Unit", number: "47280", fullNumber: "94847280", category: "Transit" },
+    { name: "Transit Unit Alt", number: "56978", fullNumber: "94856978", category: "Transit" },
+    
+    { name: "Volunteer Gift & Craft Shop", number: "56072", fullNumber: "94856072", category: "Volunteer Services" },
+    { name: "Volunteer Services", number: "56422", fullNumber: "94856422", category: "Volunteer Services" },
+    
+    // W
+    { name: "Wardperson Department", number: "56288", fullNumber: "94856288", category: "Wardperson" },
+    { name: "Wardsperson Manager", number: "0409197506", category: "Wardperson" },
+    { name: "Chief Wardsperson", number: "0459029599", category: "Wardperson" },
+    
+    // Wards
+    { name: "Level 1C MAU", number: "56411", fullNumber: "94856411", category: "Wards" },
+    { name: "Level 2B", number: "56448", fullNumber: "94856448", category: "Wards" },
+    { name: "Level 2C ICU", number: "56633", fullNumber: "94856633", category: "Wards" },
+    { name: "Level 2D & CCU Cardio Respiratory", number: "56370", fullNumber: "94856370", category: "Wards" },
+    { name: "Level 3A STAR Building", number: "56310", fullNumber: "94856310", category: "Wards" },
+    { name: "Level 3B STAR Building", number: "56320", fullNumber: "94856320", category: "Wards" },
+    { name: "Level 3C Rehabilitation", number: "56544", fullNumber: "94856544", category: "Wards" },
+    { name: "Level 3D Rehabilitation", number: "56511", fullNumber: "94856511", category: "Wards" },
+    { name: "Level 4B", number: "56420", fullNumber: "94856420", category: "Wards" },
+    { name: "Level 4C Medical/Dementia", number: "56395", fullNumber: "94856395", category: "Wards" },
+    { name: "Level 4D Medical", number: "56399", fullNumber: "94856399", category: "Wards" },
+    { name: "Day Stay Unit", number: "56440", fullNumber: "94856440", category: "Wards" },
+    { name: "Transit Ward", number: "47280", fullNumber: "94847280", category: "Wards" },
+    
+    { name: "Work Health & Safety", number: "83309377", category: "Safety" },
+    
+    // Workforce Services
+    { name: "Workforce Services Manager", number: "83309521", category: "Workforce" },
+    { name: "Workforce Services Office", number: "83309333", category: "Workforce" },
+    { name: "Workforce Services Fax", number: "56084", fullNumber: "94856084", category: "Workforce" },
+    { name: "Payroll", number: "1300679367", category: "Payroll" },
+    { name: "Workers Compensation Enquiries", number: "56359", fullNumber: "94856359", category: "Workers Comp" },
+    { name: "Area Workers Compensation", number: "98875871", category: "Workers Comp" },
+    
+    { name: "Wound CNC", number: "56380", fullNumber: "94856380", category: "Wound Care" },
+    
+    // Direct Lines - External Hospitals & Services
+    { name: "Ambulance Control", number: "92112233", category: "Emergency Services" },
+    { name: "Ambulance Bookings", number: "131233", category: "Emergency Services" },
+    { name: "Concord Hospital", number: "97367911", category: "External Hospitals" },
+    { name: "Gosford Hospital", number: "0243202111", category: "External Hospitals" },
+    { name: "Macquarie Hospital", number: "98881222", category: "External Hospitals" },
+    { name: "Mona Vale Hospital", number: "99986300", category: "External Hospitals" },
+    { name: "Masonic Tower Whiddon Group", number: "94822552", category: "External Services" },
+    { name: "Neringah Hospital Hammond Care", number: "94882200", category: "External Hospitals" },
+    { name: "Neringah Hospital Fax", number: "94871599", category: "External Hospitals" },
+    { name: "Police Hornsby", number: "94769799", category: "Emergency Services" },
+    { name: "Hammond Care 6am-10pm", number: "1800826166", category: "External Services" },
+    { name: "Lucinda Overnight Respite", number: "91019550", category: "External Services" },
+    { name: "Royal North Shore Hospital", number: "99267111", category: "External Hospitals" },
+    { name: "Ryde Hospital", number: "98740199", category: "External Hospitals" },
+    { name: "Sydney Adventist Hospital", number: "94879111", category: "External Hospitals" },
+    { name: "Westmead Hospital", number: "88905555", category: "External Hospitals" },
+    { name: "Westmead Children's Hospital", number: "98450000", category: "External Hospitals" },
+    
+    // Main Numbers
+    { name: "Hornsby Hospital Main", number: "94779123", category: "Main Numbers", isMainNumber: true },
+    { name: "Security Officer on Duty", number: "0448423149", category: "Security", isEmergency: true },
+    { name: "Security Office", number: "56280", fullNumber: "94856280", category: "Security" },
+    { name: "Security Supervisor", number: "56282", fullNumber: "94856282", category: "Security" },
+    { name: "Security Manager", number: "56281", fullNumber: "94856281", category: "Security" }
+  ];
+
+  // Function to format phone number for display
+  const formatPhoneNumber = (number) => {
+    // Remove any spaces and non-digit characters except +
+    const cleanNumber = number.replace(/[^\d+]/g, '');
+    
+    // Format based on number type
+    if (cleanNumber.startsWith('1800') || cleanNumber.startsWith('1300')) {
+      return cleanNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+    } else if (cleanNumber.startsWith('04') || cleanNumber.startsWith('+614')) {
+      return cleanNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+    } else if (cleanNumber.length === 8 && cleanNumber.startsWith('9')) {
+      return cleanNumber.replace(/(\d{4})(\d{4})/, '$1 $2');
+    } else if (cleanNumber.length === 10 && cleanNumber.startsWith('02')) {
+      return cleanNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1 $2 $3');
+    } else if (cleanNumber.length === 10) {
+      return cleanNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+    }
+    return cleanNumber;
+  };
+
+  // Function to get the callable number (with prefix if needed)
+  const getCallableNumber = (entry) => {
+    if (entry.fullNumber) {
+      return entry.fullNumber;
+    }
+    return entry.number;
+  };
+
+  // Filter directory based on search term
+  const filteredDirectory = useMemo(() => {
+    if (!searchTerm.trim()) return phoneDirectory;
+    
+    const search = searchTerm.toLowerCase();
+    return phoneDirectory.filter(entry =>
+      entry.name.toLowerCase().includes(search) ||
+      entry.category.toLowerCase().includes(search) ||
+      entry.number.includes(search) ||
+      (entry.fullNumber && entry.fullNumber.includes(search))
+    );
+  }, [searchTerm]);
+
+  // Group entries by category
+  const groupedDirectory = useMemo(() => {
+    const groups = {};
+    filteredDirectory.forEach(entry => {
+      if (!groups[entry.category]) {
+        groups[entry.category] = [];
+      }
+      groups[entry.category].push(entry);
+    });
+    
+    // Sort categories, putting Emergency and Main Numbers first
+    const sortedCategories = Object.keys(groups).sort((a, b) => {
+      if (a === 'Emergency') return -1;
+      if (b === 'Emergency') return 1;
+      if (a === 'Main Numbers') return -1;
+      if (b === 'Main Numbers') return 1;
+      return a.localeCompare(b);
+    });
+    
+    const sortedGroups = {};
+    sortedCategories.forEach(category => {
+      sortedGroups[category] = groups[category].sort((a, b) => a.name.localeCompare(b.name));
+    });
+    
+    return sortedGroups;
+  }, [filteredDirectory]);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-blue-600 text-white p-4 shadow-lg">
+        <h1 className="text-xl font-bold text-center">Hornsby Ku-ring-gai</h1>
+        <h2 className="text-lg text-center">Health Service Directory</h2>
+      </div>
+
+      {/* Search Bar */}
+      <div className="p-4 bg-white shadow-sm">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search departments, services, or numbers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      {/* Emergency Notice */}
+      <div className="mx-4 mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="flex items-center">
+          <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+          <span className="text-sm text-red-800 font-medium">
+            For all clinical emergencies dial 22 22 (internal) or 9485 6333 (external)
+          </span>
+        </div>
+      </div>
+
+      {/* Results Count */}
+      <div className="px-4 pb-2">
+        <span className="text-sm text-gray-600">
+          {filteredDirectory.length} result{filteredDirectory.length !== 1 ? 's' : ''} found
+        </span>
+      </div>
+
+      {/* Directory Listing */}
+      <div className="px-4 pb-4">
+        {Object.entries(groupedDirectory).map(([category, entries]) => (
+          <div key={category} className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 pb-1 border-b border-gray-200">
+              {category}
+            </h3>
+            <div className="space-y-2">
+              {entries.map((entry, index) => (
+                <div
+                  key={`${category}-${index}`}
+                  className={`bg-white rounded-lg shadow-sm border p-4 ${
+                    entry.isEmergency ? 'border-red-300 bg-red-50' : 
+                    entry.isMainNumber ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <h4 className={`font-medium ${
+                        entry.isEmergency ? 'text-red-900' : 
+                        entry.isMainNumber ? 'text-blue-900' : 'text-gray-900'
+                      }`}>
+                        {entry.name}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {formatPhoneNumber(getCallableNumber(entry))}
+                      </p>
+                      {entry.fullNumber && entry.number !== entry.fullNumber && (
+                        <p className="text-xs text-gray-500">
+                          Internal: {entry.number}
+                        </p>
+                      )}
+                    </div>
+                    <a
+                      href={`tel:${getCallableNumber(entry)}`}
+                      className={`ml-4 p-3 rounded-full shadow-sm inline-block ${
+                        entry.isEmergency ? 'bg-red-600 hover:bg-red-700' :
+                        entry.isMainNumber ? 'bg-blue-600 hover:bg-blue-700' :
+                        'bg-green-600 hover:bg-green-700'
+                      } text-white transition-colors duration-200`}
+                      aria-label={`Call ${entry.name}`}
+                    >
+                      <Phone className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {filteredDirectory.length === 0 && (
+          <div className="text-center py-12">
+            <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
+            <p className="text-gray-500">
+              Try searching with different keywords or check your spelling.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="bg-gray-100 p-4 text-center text-sm text-gray-600 border-t">
+        <p className="mb-2">
+          <strong>Main Hospital:</strong> 9477 9123
+        </p>
+        <p className="mb-2">
+          <strong>Emergency:</strong> 22 22 (internal) | 9485 6333 (external)
+        </p>
+        <p className="text-xs">
+          When dialing 56 or 57 numbers from outside, prefix with 948
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default HornsbyPhoneDirectory;
